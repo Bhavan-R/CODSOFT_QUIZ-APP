@@ -318,7 +318,7 @@ All functionalities worked successfully.
 
 (Attach screenshot showing correct answer message)
 
-
+<img width="590" height="906" alt="image" src="https://github.com/user-attachments/assets/7278c12f-2b8b-4e45-a3db-d625740bd4a5" />
 
 ---
 
@@ -326,11 +326,17 @@ All functionalities worked successfully.
 
 (Attach screenshot showing incorrect answer message)
 
+<img width="595" height="914" alt="image" src="https://github.com/user-attachments/assets/b7ba5e66-a4f9-48de-8a73-46b672c88971" />
+
+
 ---
 
 ## Screenshot 6 – Final Result Screen
 
 (Attach screenshot showing final score and statistics)
+
+<img width="598" height="797" alt="image" src="https://github.com/user-attachments/assets/94c679a5-9d18-4543-b6f9-ab171b864d5a" />
+
 
 ---
 
@@ -338,11 +344,18 @@ All functionalities worked successfully.
 
 (Attach screenshot showing correct and incorrect answers)
 
+<img width="597" height="850" alt="image" src="https://github.com/user-attachments/assets/4ae292a5-1fc9-405d-9aaa-4c85d51b2792" />
+
+<img width="596" height="914" alt="image" src="https://github.com/user-attachments/assets/9a671aa1-68d1-44de-bfde-358c3c096492" />
+
 ---
 
 ## Screenshot 8 – Responsive Mobile View
 
 (Attach screenshot showing mobile-friendly layout)
+
+<img width="601" height="909" alt="image" src="https://github.com/user-attachments/assets/682863ee-b59b-4dd9-bb92-8717ba70ab97" />
+
 
 ---
 
