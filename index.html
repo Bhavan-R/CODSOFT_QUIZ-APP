@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quiz App</title>
+  <style>
+    :root{
+      --bg1:#0f172a;
+      --bg2:#1e293b;
+      --card:#ffffff;
+      --text:#111827;
+      --muted:#64748b;
+      --primary:#2563eb;
+      --primary2:#7c3aed;
+      --success:#16a34a;
+      --danger:#dc2626;
+      --warning:#f59e0b;
+      --border:#e5e7eb;
+      --shadow:0 18px 40px rgba(0,0,0,.18);
+      --radius:24px;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Arial, Helvetica, sans-serif;
+      min-height:100vh;
+      background:radial-gradient(circle at top, #334155, var(--bg1) 55%, #020617);
+      color:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+    }
+
+    .app{
+      width:min(980px,100%);
+      background:rgba(255,255,255,.96);
+      color:var(--text);
+      border-radius:32px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .header{
+      padding:26px 28px;
+      background:linear-gradient(135deg,var(--primary),var(--primary2));
+      color:#fff;
+    }
+
+    .header h1{
+      margin:0 0 6px;
+      font-size:2rem;
+    }
+
+    .header p{
+      margin:0;
+      opacity:.95;
+      line-height:1.5;
+    }
+
+    .content{
+      padding:28px;
+    }
+
+    .screen{
+      display:none;
+    }
+
+    .screen.active{
+      display:block;
+    }
+
+    .home-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+      gap:18px;
+      margin-top:18px;
+    }
+
+    .quiz-card{
+      background:#fff;
+      border:1px solid var(--border);
+      border-radius:22px;
+      padding:20px;
+      box-shadow:0 10px 22px rgba(15,23,42,.06);
+      transition:.2s ease;
+    }
+
+    .quiz-card:hover{transform:translateY(-2px)}
+    .quiz-card h3{
+      margin:0 0 8px;
+      font-size:1.15rem;
+    }
+
+    .quiz-card p{
+      margin:0 0 16px;
+      color:var(--muted);
+      line-height:1.5;
+      font-size:14px;
+    }
+
+    .btn-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-top:18px;
+    }
+
+    button{
+      border:none;
+      cursor:pointer;
+      padding:12px 16px;
+      border-radius:14px;
+      font-weight:700;
+      transition:.2s ease;
+      font-size:14px;
+    }
+
+    button:hover{transform:translateY(-1px)}
+    .primary-btn{
+      background:linear-gradient(135deg,var(--primary),var(--primary2));
+      color:#fff;
+    }
+    .secondary-btn{
+      background:#e2e8f0;
+      color:#0f172a;
+    }
+    .success-btn{
+      background:#dcfce7;
+      color:#166534;
+    }
+    .danger-btn{
+      background:#fee2e2;
+      color:#b91c1c;
+    }
+
+    .quiz-top{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-bottom:18px;
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      background:#eff6ff;
+      color:#1d4ed8;
+      padding:8px 12px;
+      border-radius:999px;
+      font-size:13px;
+      font-weight:700;
+    }
+
+    .progress-wrap{
+      margin:18px 0 24px;
+    }
+
+    .progress-bar{
+      width:100%;
+      height:12px;
+      background:#e5e7eb;
+      border-radius:999px;
+      overflow:hidden;
+    }
+
+    .progress-fill{
+      height:100%;
+      width:0%;
+      background:linear-gradient(135deg,var(--primary),var(--primary2));
+      border-radius:999px;
+      transition:width .3s ease;
+    }
+
+    .question-card{
+      background:linear-gradient(180deg,#f8fafc,#eef2ff);
+      border:1px solid var(--border);
+      border-radius:24px;
+      padding:24px;
+      box-shadow:0 12px 24px rgba(15,23,42,.05);
+    }
+
+    .question-card h2{
+      margin:0 0 14px;
+      font-size:1.35rem;
+      line-height:1.5;
+    }
+
+    .options{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:12px;
+      margin-top:18px;
+    }
+
+    .option{
+      width:100%;
+      text-align:left;
+      background:#fff;
+      color:#111827;
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:14px 16px;
+      box-shadow:0 6px 16px rgba(15,23,42,.04);
+      font-weight:600;
+    }
+
+    .option.selected{
+      border-color:var(--primary);
+      background:#eff6ff;
+    }
+
+    .feedback{
+      margin-top:16px;
+      padding:14px 16px;
+      border-radius:16px;
+      font-weight:700;
+      display:none;
+    }
+
+    .feedback.show{display:block}
+    .feedback.correct{
+      background:#dcfce7;
+      color:#166534;
+    }
+    .feedback.wrong{
+      background:#fee2e2;
+      color:#b91c1c;
+    }
+
+    .footer-actions{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top:20px;
+    }
+
+    .result-card{
+      background:#fff;
+      border:1px solid var(--border);
+      border-radius:24px;
+      padding:24px;
+      box-shadow:0 12px 24px rgba(15,23,42,.05);
+    }
+
+    .score-box{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+      gap:14px;
+      margin:18px 0 24px;
+    }
+
+    .score-item{
+      background:#f8fafc;
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:16px;
+    }
+
+    .score-item h4{
+      margin:0 0 8px;
+      color:var(--muted);
+      font-size:13px;
+      font-weight:700;
+      text-transform:uppercase;
+      letter-spacing:.4px;
+    }
+
+    .score-item .value{
+      font-size:1.6rem;
+      font-weight:800;
+      color:#111827;
+    }
+
+    .review-list{
+      display:grid;
+      gap:12px;
+      margin-top:16px;
+    }
+
+    .review-item{
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:16px;
+      background:#fff;
+    }
+
+    .review-item.correct{
+      border-left:6px solid var(--success);
+    }
+
+    .review-item.wrong{
+      border-left:6px solid var(--danger);
+    }
+
+    .review-item h4{
+      margin:0 0 8px;
+      font-size:15px;
+      line-height:1.5;
+    }
+
+    .review-item p{
+      margin:4px 0;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.5;
+    }
+
+    .small-note{
+      color:var(--muted);
+      font-size:13px;
+      margin-top:10px;
+    }
+
+    @media (max-width: 640px){
+      .content{padding:20px}
+      .header h1{font-size:1.6rem}
+      .question-card h2{font-size:1.15rem}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="header">
+      <h1>Quiz App</h1>
+      <p>Choose a quiz, answer one question at a time, and see your score instantly.</p>
+    </div>
+
+    <div class="content">
+      <!-- HOME SCREEN -->
+      <section id="homeScreen" class="screen active">
+        <div class="quiz-top">
+          <span class="pill">Home Screen • Available Quizzes</span>
+        </div>
+
+        <div class="btn-row">
+          <button class="primary-btn" onclick="startRandomQuiz()">Start Random Quiz</button>
+        </div>
+
+        <div class="home-grid" id="quizList"></div>
+      </section>
+
+      <!-- QUIZ SCREEN -->
+      <section id="quizScreen" class="screen">
+        <div class="quiz-top">
+          <span class="pill" id="quizTitle">Quiz</span>
+          <span class="pill" id="questionCounter">Question 1 / 5</span>
+        </div>
+
+        <div class="progress-wrap">
+          <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+        </div>
+
+        <div class="question-card">
+          <h2 id="questionText">Question text</h2>
+
+          <div class="options" id="optionsContainer"></div>
+
+          <div id="feedback" class="feedback"></div>
+
+          <div class="footer-actions">
+            <button class="secondary-btn" onclick="goHome()">Back to Home</button>
+            <button class="primary-btn" id="nextBtn" onclick="nextQuestion()" disabled>Next Question</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- RESULT SCREEN -->
+      <section id="resultScreen" class="screen">
+        <div class="result-card">
+          <div class="quiz-top">
+            <span class="pill">Result Screen</span>
+          </div>
+
+          <h2 style="margin:0 0 6px;">Quiz Completed</h2>
+          <p class="small-note">Here is your final score and answer review.</p>
+
+          <div class="score-box">
+            <div class="score-item">
+              <h4>Final Score</h4>
+              <div class="value" id="finalScore">0</div>
+            </div>
+            <div class="score-item">
+              <h4>Correct Answers</h4>
+              <div class="value" id="correctCount">0</div>
+            </div>
+            <div class="score-item">
+              <h4>Incorrect Answers</h4>
+              <div class="value" id="incorrectCount">0</div>
+            </div>
+          </div>
+
+          <h3 style="margin:0 0 10px;">Answer Review</h3>
+          <div id="reviewList" class="review-list"></div>
+
+          <div class="btn-row" style="margin-top:22px;">
+            <button class="primary-btn" onclick="restartQuiz()">Play Again</button>
+            <button class="secondary-btn" onclick="goHome()">Go to Home</button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const quizzes = [
+      {
+        id: "general",
+        title: "General Knowledge",
+        description: "A mixed set of easy general knowledge questions.",
+        questions: [
+          {
+            question: "What is the capital of India?",
+            options: ["Mumbai", "New Delhi", "Chennai", "Kolkata"],
+            answer: "New Delhi"
+          },
+          {
+            question: "Which planet is known as the Red Planet?",
+            options: ["Earth", "Mars", "Jupiter", "Venus"],
+            answer: "Mars"
+          },
+          {
+            question: "How many days are there in a leap year?",
+            options: ["365", "366", "364", "360"],
+            answer: "366"
+          },
+          {
+            question: "Which is the largest ocean on Earth?",
+            options: ["Atlantic Ocean", "Indian Ocean", "Pacific Ocean", "Arctic Ocean"],
+            answer: "Pacific Ocean"
+          },
+          {
+            question: "Who wrote 'Romeo and Juliet'?",
+            options: ["William Shakespeare", "Charles Dickens", "Mark Twain", "Jane Austen"],
+            answer: "William Shakespeare"
+          }
+        ]
+      },
+      {
+        id: "science",
+        title: "Science Quiz",
+        description: "Basic science questions to test your knowledge.",
+        questions: [
+          {
+            question: "What gas do plants absorb from the atmosphere?",
+            options: ["Oxygen", "Hydrogen", "Carbon Dioxide", "Nitrogen"],
+            answer: "Carbon Dioxide"
+          },
+          {
+            question: "What is the chemical symbol for water?",
+            options: ["O2", "H2O", "CO2", "NaCl"],
+            answer: "H2O"
+          },
+          {
+            question: "How many bones are there in the adult human body?",
+            options: ["206", "208", "201", "210"],
+            answer: "206"
+          },
+          {
+            question: "Which organ pumps blood throughout the body?",
+            options: ["Liver", "Heart", "Lungs", "Kidney"],
+            answer: "Heart"
+          },
+          {
+            question: "What part of the plant conducts photosynthesis?",
+            options: ["Roots", "Stem", "Leaves", "Flowers"],
+            answer: "Leaves"
+          }
+        ]
+      },
+      {
+        id: "computer",
+        title: "Computer Basics",
+        description: "Simple questions about computers and technology.",
+        questions: [
+          {
+            question: "What does CPU stand for?",
+            options: ["Central Processing Unit", "Computer Personal Unit", "Central Print Unit", "Control Processing Unit"],
+            answer: "Central Processing Unit"
+          },
+          {
+            question: "Which of these is an operating system?",
+            options: ["Python", "Windows", "HTML", "CSS"],
+            answer: "Windows"
+          },
+          {
+            question: "What is the full form of RAM?",
+            options: ["Random Access Memory", "Read Access Memory", "Rapid Action Memory", "Run Access Machine"],
+            answer: "Random Access Memory"
+          },
+          {
+            question: "Which device is used to input data?",
+            options: ["Monitor", "Printer", "Keyboard", "Speaker"],
+            answer: "Keyboard"
+          },
+          {
+            question: "Which language is used for web page structure?",
+            options: ["Java", "HTML", "C++", "Python"],
+            answer: "HTML"
+          }
+        ]
+      }
+    ];
+
+    const homeScreen = document.getElementById("homeScreen");
+    const quizScreen = document.getElementById("quizScreen");
+    const resultScreen = document.getElementById("resultScreen");
+    const quizList = document.getElementById("quizList");
+    const quizTitle = document.getElementById("quizTitle");
+    const questionCounter = document.getElementById("questionCounter");
+    const progressFill = document.getElementById("progressFill");
+    const questionText = document.getElementById("questionText");
+    const optionsContainer = document.getElementById("optionsContainer");
+    const feedback = document.getElementById("feedback");
+    const nextBtn = document.getElementById("nextBtn");
+
+    const finalScore = document.getElementById("finalScore");
+    const correctCount = document.getElementById("correctCount");
+    const incorrectCount = document.getElementById("incorrectCount");
+    const reviewList = document.getElementById("reviewList");
+
+    let currentQuiz = null;
+    let currentIndex = 0;
+    let score = 0;
+    let selectedAnswer = null;
+    let canProceed = false;
+    let answers = [];
+
+    function renderQuizList() {
+      quizList.innerHTML = "";
+      quizzes.forEach((quiz) => {
+        const card = document.createElement("div");
+        card.className = "quiz-card";
+        card.innerHTML = `
+          <h3>${quiz.title}</h3>
+          <p>${quiz.description}</p>
+          <div class="btn-row">
+            <button class="primary-btn" onclick="startQuiz('${quiz.id}')">Start Quiz</button>
+          </div>
+        `;
+        quizList.appendChild(card);
+      });
+    }
+
+    function showScreen(screen) {
+      [homeScreen, quizScreen, resultScreen].forEach(s => s.classList.remove("active"));
+      screen.classList.add("active");
+    }
+
+    function startQuiz(quizId) {
+      currentQuiz = quizzes.find(q => q.id === quizId);
+      currentIndex = 0;
+      score = 0;
+      answers = [];
+      showScreen(quizScreen);
+      quizTitle.textContent = currentQuiz.title;
+      loadQuestion();
+    }
+
+    function startRandomQuiz() {
+      const randomQuiz = quizzes[Math.floor(Math.random() * quizzes.length)];
+      startQuiz(randomQuiz.id);
+    }
+
+    function loadQuestion() {
+      const q = currentQuiz.questions[currentIndex];
+      selectedAnswer = null;
+      canProceed = false;
+      nextBtn.disabled = true;
+      feedback.className = "feedback";
+      feedback.textContent = "";
+
+      questionCounter.textContent = `Question ${currentIndex + 1} / ${currentQuiz.questions.length}`;
+      progressFill.style.width = `${(currentIndex / currentQuiz.questions.length) * 100}%`;
+      questionText.textContent = q.question;
+
+      optionsContainer.innerHTML = "";
+      q.options.forEach((option) => {
+        const btn = document.createElement("button");
+        btn.className = "option";
+        btn.textContent = option;
+        btn.onclick = () => selectOption(btn, option);
+        optionsContainer.appendChild(btn);
+      });
+    }
+
+    function selectOption(button, option) {
+      if (canProceed) return;
+
+      selectedAnswer = option;
+      document.querySelectorAll(".option").forEach(btn => btn.classList.remove("selected"));
+      button.classList.add("selected");
+
+      const correctAnswer = currentQuiz.questions[currentIndex].answer;
+      const isCorrect = option === correctAnswer;
+
+      if (isCorrect) {
+        score++;
+        feedback.textContent = `Correct! ${correctAnswer} is the right answer.`;
+        feedback.className = "feedback show correct";
+      } else {
+        feedback.textContent = `Wrong! The correct answer is ${correctAnswer}.`;
+        feedback.className = "feedback show wrong";
+      }
+
+      answers.push({
+        question: currentQuiz.questions[currentIndex].question,
+        selected: option,
+        correct: correctAnswer,
+        isCorrect
+      });
+
+      canProceed = true;
+      nextBtn.disabled = false;
+    }
+
+    function nextQuestion() {
+      if (!canProceed) return;
+
+      currentIndex++;
+      if (currentIndex < currentQuiz.questions.length) {
+        loadQuestion();
+      } else {
+        showResults();
+      }
+    }
+
+    function showResults() {
+      showScreen(resultScreen);
+      finalScore.textContent = `${score} / ${currentQuiz.questions.length}`;
+      correctCount.textContent = score;
+      incorrectCount.textContent = currentQuiz.questions.length - score;
+
+      reviewList.innerHTML = "";
+      answers.forEach((item, index) => {
+        const div = document.createElement("div");
+        div.className = `review-item ${item.isCorrect ? "correct" : "wrong"}`;
+        div.innerHTML = `
+          <h4>Q${index + 1}. ${item.question}</h4>
+          <p><strong>Your Answer:</strong> ${item.selected}</p>
+          <p><strong>Correct Answer:</strong> ${item.correct}</p>
+          <p><strong>Status:</strong> ${item.isCorrect ? "Correct" : "Incorrect"}</p>
+        `;
+        reviewList.appendChild(div);
+      });
+    }
+
+    function restartQuiz() {
+      if (currentQuiz) startQuiz(currentQuiz.id);
+    }
+
+    function goHome() {
+      showScreen(homeScreen);
+    }
+
+    renderQuizList();
+    window.startQuiz = startQuiz;
+    window.startRandomQuiz = startRandomQuiz;
+    window.restartQuiz = restartQuiz;
+    window.goHome = goHome;
+  </script>
+</body>
+</html>
